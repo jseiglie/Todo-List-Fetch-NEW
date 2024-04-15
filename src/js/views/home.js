@@ -6,6 +6,7 @@ export const Home = () => {
 
 	const { store, actions } = useContext(Context)
 	const [task, setTask] = useState("")
+	
 
 	useEffect(() => {
 		actions.getTodos()
@@ -15,6 +16,7 @@ export const Home = () => {
 	const handleSubmit = e => {
 		e.preventDefault()
 		actions.addTask(task)
+		setTask("")
 	}
 
 	const handleEdit = (e, el, method) => {
@@ -31,7 +33,7 @@ export const Home = () => {
 					{/* el usuario de la lista de tareas */}
 					<p className="text-end my-0 ">user: @{store.user && store.user}</p>
 					<h1>Todos</h1>
-					<input type="text" className="form-control my-3" onChange={e => setTask(e.target.value)} />
+					<input type="text" className="form-control my-3" onChange={e => setTask(e.target.value)} value={task} />
 					<input type="submit" hidden value={"Add"} className="form-control" />
 
 					{store.todos?.length > 0 ?

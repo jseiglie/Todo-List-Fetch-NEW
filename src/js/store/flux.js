@@ -3,20 +3,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			todos: null,
 			user: null,
-			todos: null,
-			user: null
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
-			getTodosPromesas: () => {
-				fetch("https://playground.4geeks.com/todo/users/Aelf86")
-					.then(resp => resp.json())
-					.then(data => {
-						setStore({ newTodos: data })
-						console.log("traido por promesas ---> ", data)
-					})
-					.catch(error => console.log(error))
-			},
+			// getTodosPromesas: () => {
+			// 	fetch("https://playground.4geeks.com/todo/users/Aelf86")
+			// 		.then(resp => resp.json())
+			// 		.then(data => {
+			// 			setStore({ newTodos: data })
+			// 			console.log("traido por promesas ---> ", data)
+			// 		})
+			// 		.catch(error => console.log(error))
+			// },
 			createUser: async () => {
 				const opt = {
 					method: "POST",
@@ -54,10 +52,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			addTask: async (task) => {
 				if (task.trim().length > 3) {
-					//creamos variable auxiliar para trabajar con el todos del store
-					const aux = getStore().todos
-					aux.push({ label: task.trim(), is_done: false })
-					setStore({ todos: aux })
 					try {
 						const opt = {
 							method: "POST",
@@ -69,6 +63,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 						const resp = await fetch("https://playground.4geeks.com/todo/todos/seiglie", opt)
 						const data = await resp.json()
+						if (resp.ok) {
+							// añadimos la respuesta de la API (nueva tarea) a nuestros todos
+							setStore({ ...getStore().todos, data })
+							//llamamos a getTodos para que se nos actualice el front
+							getActions().getTodos()
+						}
 						console.log("new task added ---> ", data)
 						//no necesitamos traernos las tareas de nuevo
 						return true
@@ -83,34 +83,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			updateTask: async el => {
 				if (el.label.trim().length > 3) {
-				try {
-					const opt = {
-						method: "PUT",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						// se envia la tarea a modificar solamente
-						body: JSON.stringify(el)
+					try {
+						const opt = {
+							method: "PUT",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							// se envia la tarea a modificar solamente
+							body: JSON.stringify(el)
+						}
+						//se pasa el id de la tarea que se va a modificar en el endpoint
+						const resp = await fetch("https://playground.4geeks.com/todo/todos/" + el.id, opt)
+						const data = await resp.json()
+						console.log("updated task --> ", await data)
+						return true
+					} catch (error) {
+						console.log("error ---> ", error);
+						return false
 					}
-					//se pasa el id de la tarea que se va a modificar en el endpoint
-					const resp = await fetch("https://playground.4geeks.com/todo/todos/" + el.id, opt)
-					const data = await resp.json()
-					console.log("updated task --> ", await data)
-					return true
-				} catch (error) {
-					console.log("error ---> ", error);
-					return false
 				}
-			}
 				//si nuevo valor de la tarea es menor a 3 en largo, se lanza alerta
-			alert("Task shouln't be less than 4 characters")
+				alert("Task shouln't be less than 4 characters")
 				return false
 			},
 			deleteTask: async (id) => {
 				try {
-					//guardamos en un variable auxiliar la lista de tareas sin la tarea que se elimina y la guardamos en el store
-					const aux = getStore().todos.filter(el => el.id != id)
-					setStore({ todos: aux })
+					//aplicamos un filter para quitar la tarea que se va a eliminar
+					setStore({ todos: getStore().todos.filter(el => el.id != id) })
 					const opt = {
 						method: "DELETE",
 						headers: {
