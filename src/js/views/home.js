@@ -1,8 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import React, { useContext, useEffect, useState } from "react";
-import rigoImage from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
-import { Context } from "../store/appContext";
 import { Context } from "../store/appContext";
 
 export const Home = () => {
@@ -38,10 +35,10 @@ export const Home = () => {
 					<input type="submit" hidden value={"Add"} className="form-control" />
 
 					{store.todos?.length > 0 ?
-					// solo se puede devolver un hijo, por eso utilizamos un fragmento <></>
+						// solo se puede devolver un hijo, por eso utilizamos un fragmento <></>
 						(<>
 							{store.todos?.map(el =>
-							// la clase "input-group" nos permite agrupar en el input más elementos html
+								// la clase "input-group" nos permite agrupar en el input más elementos html
 								<div key={el.id} className="input-group flex-nowrap d-flex mt-1">
 									<input type="text" className="form-control border-0" defaultValue={el.label} onChange={(e) => el.label = e.target.value} />
 									<button className="btn btn-light " onClick={e => handleEdit(e, el, "put")} ><span className="fa-regular fa-pen-to-square text-success"></span></button>

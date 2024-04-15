@@ -2,7 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			todos: null,
-			user: null
+			user: null,
 			todos: null,
 			user: null
 		},
@@ -82,7 +82,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				return false
 			},
 			updateTask: async el => {
-				if (task.trim().length > 3) {
+				if (el.label.trim().length > 3) {
 				try {
 					const opt = {
 						method: "PUT",
@@ -127,8 +127,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false
 				}
 			}
-
-
 		}
 	};
 };
